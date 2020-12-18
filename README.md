@@ -1,2 +1,3 @@
-# STM32F407VGT6-Drivers
- This repository contains device drivers created by me
+# STM32F407XX-Drivers
+ This repository contains device drivers for stm32f407xx microcontroller family.
+ These drivers are developed by me.
