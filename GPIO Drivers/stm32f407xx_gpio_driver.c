@@ -25,7 +25,75 @@
  *
  *************************************************************************/
 void GPIO_Init(GPIO_Handle *pGPIO_Handle)
-{
+{	uint32_t temp = 0;
+
+	//CONFIGURING PIN MODE
+	if(pGPIO_Handle->GPIO_PinCFGN.GPIO_PinMode <= GPIO_MODE_ANG)
+	{
+		//NON INTERRUPT MODE
+		temp = (pGPIO_Handle->GPIO_PinCFGN.GPIO_PinMode << (2*pGPIO_Handle->GPIO_PinCFGN.GPIO_PinNumber));
+		pGPIO_Handle->pGPIOx->MODER &= ~(0x3 << pGPIO_Handle->GPIO_PinCFGN.GPIO_PinNumber);
+		pGPIO_Handle->pGPIOx->MODER |= temp;
+	}
+	else
+	{
+		//INTERRUPT MODE
+	}
+
+
+	temp = 0;
+	//CONFIGURING PIN SPEED
+	if(pGPIO_Handle->GPIO_PinCFGN.GPIO_PinSpeed <= GPIO_OUT_SPD_HI)
+	{
+		//NON INTERRUPT MODE
+		temp = (pGPIO_Handle->GPIO_PinCFGN.GPIO_PinSpeed << (2*pGPIO_Handle->GPIO_PinCFGN.GPIO_PinNumber));
+		pGPIO_Handle->pGPIOx->OSPEEDR &= ~(0x3 << pGPIO_Handle->GPIO_PinCFGN.GPIO_PinNumber);
+		pGPIO_Handle->pGPIOx->OSPEEDR |= temp;
+	}
+
+
+	temp = 0;
+	//CONFIGURING PIN OUTPUT TYPE
+	if(pGPIO_Handle->GPIO_PinCFGN.GPIO_PinOPType <= GPIO_OUT_TYP_OD)
+	{
+		temp = (pGPIO_Handle->GPIO_PinCFGN.GPIO_PinOPType << (1*pGPIO_Handle->GPIO_PinCFGN.GPIO_PinNumber));
+		pGPIO_Handle->pGPIOx->OTYPER &= ~(0x1 << pGPIO_Handle->GPIO_PinCFGN.GPIO_PinNumber);
+		pGPIO_Handle->pGPIOx->OTYPER |= temp;
+	}
+
+
+	temp = 0;
+	//CONFIGURING PIN PULL-UP / PULL-DOWN
+	if(pGPIO_Handle->GPIO_PinCFGN.GPIO_PinPuPdControl <= GPIO_PIN_PD)
+	{
+		temp = (pGPIO_Handle->GPIO_PinCFGN.GPIO_PinPuPdControl << (2*pGPIO_Handle->GPIO_PinCFGN.GPIO_PinNumber));
+		pGPIO_Handle->pGPIOx->PUPDR &= ~(0x3 << pGPIO_Handle->GPIO_PinCFGN.GPIO_PinNumber);
+		pGPIO_Handle->pGPIOx->PUPDR |= temp;
+	}
+
+
+	temp = 0;
+	//CONFIGURING PIN ALTERNATE FUNCTION
+	if(pGPIO_Handle->GPIO_PinCFGN.GPIO_PinMode == GPIO_MODE_ALTFN)
+	{
+		uint8_t ALFN_Reg_Select, ALFN_Pin_Select;
+		ALFN_Reg_Select = (pGPIO_Handle->GPIO_PinCFGN.GPIO_PinNumber / 8);
+		ALFN_Pin_Select = (pGPIO_Handle->GPIO_PinCFGN.GPIO_PinNumber % 8);
+
+		if(ALFN_Reg_Select > 1)
+		{
+			pGPIO_Handle->pGPIOx->AFRH &= ~(0xF << ALFN_Pin_Select);
+			pGPIO_Handle->pGPIOx->AFRH |= (pGPIO_Handle->GPIO_PinCFGN.GPIO_PinAltFunMode << (0x4*ALFN_Pin_Select));
+
+		}
+
+		if(ALFN_Reg_Select < 1)
+		{
+			pGPIO_Handle->pGPIOx->AFRL &= ~(0xF << ALFN_Pin_Select);
+			pGPIO_Handle->pGPIOx->AFRL |= (pGPIO_Handle->GPIO_PinCFGN.GPIO_PinAltFunMode << (0x4*ALFN_Pin_Select));
+
+		}
+	}
 
 }
 
