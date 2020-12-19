@@ -297,7 +297,9 @@ void GPIO_PCLK_Control(GPIO_Reg *pGPIOx, uint8_t ENorDI)
  *************************************************************************/
 uint8_t GPIO_Read_Input_Pin(GPIO_Reg *pGPIOx, uint8_t PinNumber)
 {
-
+	uint8_t value;
+	value = (uint8_t)((pGPIOx->IDR >> PinNumber) & (0x00000001));
+	return value;
 }
 
 
@@ -316,6 +318,9 @@ uint8_t GPIO_Read_Input_Pin(GPIO_Reg *pGPIOx, uint8_t PinNumber)
  *************************************************************************/
 uint16_t GPIO_Read_Input_Port(GPIO_Reg *pGPIOx)
 {
+	uint16_t value;
+	value = (uint16_t)(pGPIOx->IDR);
+	return value;
 
 }
 
@@ -340,7 +345,15 @@ uint16_t GPIO_Read_Input_Port(GPIO_Reg *pGPIOx)
  *************************************************************************/
 void GPIO_Write_Output_Pin(GPIO_Reg *pGPIOx, uint8_t PinNumber, uint8_t Value)
 {
+	if(Value == SET)
+	{
+		pGPIOx->ODR |= (1<<PinNumber);
+	}
 
+	else
+	{
+		pGPIOx->ODR &= ~(1<<PinNumber);
+	}
 }
 
 
@@ -360,7 +373,7 @@ void GPIO_Write_Output_Pin(GPIO_Reg *pGPIOx, uint8_t PinNumber, uint8_t Value)
  *************************************************************************/
 void GPIO_Write_Output_Port(GPIO_Reg *pGPIOx, uint16_t Value)
 {
-
+	pGPIOx->ODR = Value;
 }
 
 
