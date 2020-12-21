@@ -396,7 +396,14 @@ void GPIO_Write_Output_Port(GPIO_Reg *pGPIOx, uint16_t Value)
  *************************************************************************/
 void GPIO_Toggle_Pin(GPIO_Reg *pGPIOx, uint8_t PinNumber)
 {
-
+	if(pGPIOx->ODR == 0)
+	{
+		pGPIOx->ODR |= (1 << PinNumber);
+	}
+	else
+	{
+		pGPIOx->ODR &= ~(1 << PinNumber);
+	}
 }
 
 
