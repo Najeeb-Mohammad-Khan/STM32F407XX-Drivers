@@ -64,9 +64,9 @@ typedef struct{
 #define GPIO_MODE_ALTFN		0x2			//GPIO Mode As ALTERNATE FUNCTION
 #define GPIO_MODE_ANG		0x3			//GPIO Mode As ANALOG
 	//INTRRUPT MODES
-#define GPIO_MODE_IN_FT		0x4			//GPIO Mode As INPUT FALLING EDGE TRIGGER
-#define GPIO_MODE_IN_RT		0x5			//GPIO Mode As INPUT RISING EDGE TRIGGER
-#define GPIO_MODE_IN_RFT	0x6			//GPIO Mode As INPUT RISING EDGE - FALLING EDGE TRIGGER
+#define GPIO_MODE_IT_FT		0x4			//GPIO Mode As INPUT FALLING EDGE TRIGGER
+#define GPIO_MODE_IT_RT		0x5			//GPIO Mode As INPUT RISING EDGE TRIGGER
+#define GPIO_MODE_IT_RFT	0x6			//GPIO Mode As INPUT RISING EDGE - FALLING EDGE TRIGGER
 
 //GPIO PIN POSSIBLE OUTPUT TYPES { @GPIO_PIN_OUT_TYPE }
 #define GPIO_OUT_TYP_PP		0x0			//GPIO OUTPUT TYPE As PUSH - PULL
@@ -122,7 +122,8 @@ void GPIO_Toggle_Pin(GPIO_Reg *pGPIOx, uint8_t PinNumber);
 /*
  * GPIO IRQ Configuration and ISR Handling
  */
-void IRQ_Config(uint8_t IRQNumber, uint8_t IRQPriority, uint8_t ENorDI);
+void IRQ_Config(uint8_t IRQNumber, uint8_t ENorDI);
+void IRQ_PriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority);
 void IRQ_Handling(uint8_t PinNumber);
 
 

@@ -11,6 +11,28 @@
 #include <stdint.h>
 #define __VOL	volatile
 
+
+/*
+ * ***************    PROCESSOR SPECIFIC DETAILS    *******************
+ */
+
+//ARM CORETEX Mx NVIC ISERx REGISTER ADDRESSES
+#define NVIC_ISER0					((__VOL uint32_t*)0xE000E100)
+#define NVIC_ISER1					((__VOL uint32_t*)0xE000E104)
+#define NVIC_ISER2					((__VOL uint32_t*)0xE000E108)
+#define NVIC_ISER3					((__VOL uint32_t*)0xE000E10C)
+
+//ARM CORETEX Mx NVIC ICERx REGISTER ADDRESS
+#define NVIC_ICER0					((__VOL uint32_t*)0XE000E180)
+#define NVIC_ICER1					((__VOL uint32_t*)0XE000E184)
+#define NVIC_ICER2					((__VOL uint32_t*)0XE000E188)
+#define NVIC_ICER3					((__VOL uint32_t*)0XE000E18C)
+
+//ARM CORETEX Mx Priority REGISTER ADDRESS
+#define NVIC_PR_BASEADDR			((__VOL uint32_t*)0xE000E400)
+#define NO_PR_BITS_IMPLEMENTED		4
+/*********************************************************************/
+
 /* Base Address Of Flash And SRAM Memory */
 #define FLASH_BASEADDR				0x08000000U	/*Flash Base Address*/
 
@@ -73,8 +95,22 @@
 #define USART1_BASE_ADDR			(APB2_PERIPH_BASE + 0x1000) /*USART1 OFFSET = 0x1000*/
 #define USART6_BASE_ADDR			(APB2_PERIPH_BASE + 0x1400) /*USART6 OFFSET = 0x1400*/
 
-#define EXT1_BASE_ADDR				(APB2_PERIPH_BASE + 0x3C00) /*EXT1 OFFSET = 0x3C00*/
+#define EXTI_BASE_ADDR				(APB2_PERIPH_BASE + 0x3C00) /*EXT1 OFFSET = 0x3C00*/
 #define SYSCFG_BASE_ADDR			(APB2_PERIPH_BASE + 0x3800) /*SYSCFG OFFSET = 0x3800*/
+
+
+/*
+ * Macro to calculate required Bits to be written in EXTICRx.
+ */
+#define GPIO_Base_Addr_To_Code(GPIOx)	( (GPIOx == GPIOA) ? 0 :\
+										  (GPIOx == GPIOB) ? 1 :\
+										  (GPIOx == GPIOC) ? 2 :\
+										  (GPIOx == GPIOD) ? 3 :\
+										  (GPIOx == GPIOE) ? 4 :\
+										  (GPIOx == GPIOF) ? 5 :\
+										  (GPIOx == GPIOG) ? 6 :\
+										  (GPIOx == GPIOH) ? 7 :\
+										  (GPIOx == GPIOA) ? 8 :0 )
 
 
 typedef struct
@@ -129,6 +165,36 @@ typedef struct
 
 typedef struct
 {
+	__VOL uint32_t IMR;		/* Interrupt mask register 								ADDRESS OFFSET = 0x00*/
+	__VOL uint32_t EMR;		/* Event mask register 									ADDRESS OFFSET = 0x04*/
+	__VOL uint32_t RTSR;	/* Rising trigger selection register 					ADDRESS OFFSET = 0x08*/
+	__VOL uint32_t FTSR;	/* Falling trigger selection register 					ADDRESS OFFSET = 0x0C*/
+	__VOL uint32_t SWIER;	/* Software interrupt event register 					ADDRESS OFFSET = 0x10*/
+	__VOL uint32_t PR;		/* Pending register 									ADDRESS OFFSET = 0x14*/
+}EXTI_Reg;
+
+
+/*
+ * System configuration controller Register(SYSCFG)
+ */
+typedef struct
+{
+	__VOL uint32_t MEMRMP;		/* SYSCFG memory remap register 						ADDRESS OFFSET = 0x00*/
+	__VOL uint32_t PMC;			/* SYSCFG peripheral mode configuration register		ADDRESS OFFSET = 0x04*/
+	__VOL uint32_t EXTICR1;		/* SYSCFG external interrupt configuration register 1	ADDRESS OFFSET = 0x08*/
+	__VOL uint32_t EXTICR2;		/* SYSCFG external interrupt configuration register 2	ADDRESS OFFSET = 0x0C*/
+	__VOL uint32_t EXTICR3;		/* SYSCFG external interrupt configuration register 3	ADDRESS OFFSET = 0x10*/
+	__VOL uint32_t EXTICR4;		/* SYSCFG external interrupt configuration register 4	ADDRESS OFFSET = 0x14*/
+	__VOL uint32_t Reserved0;	/* RCC Reserved register.							ADDRESS OFFSET = 0x18*/
+	__VOL uint32_t Reserved1;	/* RCC Reserved register.							ADDRESS OFFSET = 0x1C*/
+	__VOL uint32_t CMPCR;		/* Compensation cell control register					ADDRESS OFFSET = 0x20*/
+	__VOL uint32_t Reserved2;	/* RCC Reserved register.							ADDRESS OFFSET = 0x24*/
+	__VOL uint32_t Reserved3;	/* RCC Reserved register.							ADDRESS OFFSET = 0x28*/
+}SYSCFG_Reg;
+
+
+typedef struct
+{
 	__VOL uint32_t MODER;		/*REGISTER TO SET MODE OF GPIO PORT PIN.						ADDRESS OFFSET = 0x00*/
 	__VOL uint32_t OTYPER;		/*REGISTER TO SET OUTPUT TYPE OF GPIO PORT PIN					ADDRESS OFFSET = 0x04*/
 	__VOL uint32_t OSPEEDR;		/*REGISTER TO SET OUTPUT SPEED OF GPIO PORT PIN.				ADDRESS OFFSET = 0x08*/
@@ -141,23 +207,6 @@ typedef struct
 	__VOL uint32_t AFRH;		/*REGISTER TO SET ALT. FUNC. HIGHER(8-15)BITS OF GPIO PORT PIN.	ADDRESS OFFSET = 0x24*/
 
 }GPIO_Reg;
-
-
-
-/*
- * System configuration controller Register(SYSCFG)
- */
-typedef struct
-{
-	__VOL uint32_t MEMRMP;		/*SYSCFG memory remap register.						ADDRESS OFFSET = 0x00*/
-	__VOL uint32_t PMC;			/*SYSCFG peripheral mode conf. register				ADDRESS OFFSET = 0x04*/
-	__VOL uint32_t EXTICR1;		/*SYSCFG external interrupt conf. register 1		ADDRESS OFFSET = 0x08*/
-	__VOL uint32_t EXTICR2;		/*SYSCFG external interrupt conf. register 2		ADDRESS OFFSET = 0x0C*/
-	__VOL uint32_t EXTICR3;		/*SYSCFG external interrupt conf. register 3		ADDRESS OFFSET = 0x10*/
-	__VOL uint32_t EXTICR4;		/*SYSCFG external interrupt conf. register 4		ADDRESS OFFSET = 0x14*/
-	__VOL uint32_t CMPCR;		/*Compensation cell control register				ADDRESS OFFSET = 0x20*/
-
-}SYSCFG_Reg;
 
 
 typedef struct
@@ -216,6 +265,11 @@ typedef struct
  */
 #define DMA			((DMA_Reg*)DMA_BASE_ADDR)
 
+
+/*EXTI Definition (EXTI Base Address Type Casted To EXTI_Reg)
+ *
+ */
+#define EXTI	((EXTI_Reg*)EXTI_BASE_ADDR)
 
 
 /*
@@ -339,8 +393,8 @@ typedef struct
 /*
  * Generic Maros
  */
-#define ENABLE				0
-#define DISABLE				1
+#define ENABLE				1
+#define DISABLE				0
 #define SET 				ENABLE
 #define RESET 				DISABLE
 
