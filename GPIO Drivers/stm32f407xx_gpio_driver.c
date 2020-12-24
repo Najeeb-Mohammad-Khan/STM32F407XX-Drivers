@@ -456,7 +456,7 @@ void GPIO_Toggle_Pin(GPIO_Reg *pGPIOx, uint8_t PinNumber)
  */
 /*********************  FUNCTION DOCUMENTATION  ***************************
  * @Function	-	IRQ_Config
- * @Brief		-	This function configures the IRQ
+ * @Brief		-	This function (ENABLE / DIABLE) the IRQ
  *
  * @Input Parameters:
  * 1. IRQNumber		- IRQ number of the Interrupt
@@ -513,7 +513,7 @@ void IRQ_Config(uint8_t IRQNumber, uint8_t ENorDI)
 
 /*********************  FUNCTION DOCUMENTATION  ***************************
  * @Function	-	IRQ_PriorityConfig
- * @Brief		-	This function configures the IRQ
+ * @Brief		-	This function configures the Priority of IRQ
  *
  * @Input Parameters:
  * 1. IRQNumber		- IRQ number of the Interrupt
@@ -538,7 +538,7 @@ void IRQ_PriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
 
 /*********************  FUNCTION DOCUMENTATION  ***************************
  * @Function	-	IRQ_Handling
- * @Brief		-	This function Handles IRQ
+ * @Brief		-	This function Handles(CLEAR) IRQ
  *
  * @Input Parameters:
  * 1. PinNumber	- GPIO pin number
