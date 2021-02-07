@@ -456,7 +456,7 @@ void GPIO_Toggle_Pin(GPIO_Reg *pGPIOx, uint8_t PinNumber)
  */
 /*********************  FUNCTION DOCUMENTATION  ***************************
  * @Function	-	IRQ_Config
- * @Brief		-	This function (ENABLE / DIABLE) the IRQ
+ * @Brief		-	This function (ENABLE / DISABLE) the IRQ
  *
  * @Input Parameters:
  * 1. IRQNumber		- IRQ number of the Interrupt
@@ -467,7 +467,7 @@ void GPIO_Toggle_Pin(GPIO_Reg *pGPIOx, uint8_t PinNumber)
  * @Note		-	None
  *
  *************************************************************************/
-void IRQ_Config(uint8_t IRQNumber, uint8_t ENorDI)
+void GPIO_IRQ_Config(uint8_t IRQNumber, uint8_t ENorDI)
 {
 	if(ENorDI == ENABLE)
 	{
@@ -524,7 +524,7 @@ void IRQ_Config(uint8_t IRQNumber, uint8_t ENorDI)
  * @Note		-	None
  *
  *************************************************************************/
-void IRQ_PriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
+void GPIO_IRQ_PriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
 {
 	//Configuring required IPR Register To SET THE INTERRUPT.
 	uint8_t iprx = IRQNumber / 4;
@@ -548,7 +548,7 @@ void IRQ_PriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
  * @Note		-	None
  *
  *************************************************************************/
-void IRQ_Handling(uint8_t PinNumber)
+void GPIO_IRQ_Handling(uint8_t PinNumber)
 {
 	//Clearing the Triggered Interrupt
 	if(EXTI->PR & (1 << PinNumber))  //Checking if Interrupt occurred
