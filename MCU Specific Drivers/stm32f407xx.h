@@ -225,6 +225,20 @@ typedef struct
 }DMA_Reg;
 
 
+typedef struct
+{
+	__VOL uint32_t CR1;			/*SPI control register 1 (not used in I2S mode)		ADDRESS OFFSET = 0x00*/
+	__VOL uint32_t CR2;			/*SPI control register 2							ADDRESS OFFSET = 0x04*/
+	__VOL uint32_t SR;			/*SPI status register								ADDRESS OFFSET = 0x08*/
+	__VOL uint32_t DR;			/*SPI data register									ADDRESS OFFSET = 0x0C*/
+	__VOL uint32_t CRCPR;		/*SPI CRC polynomial register (not used in I2Smode)	ADDRESS OFFSET = 0x10*/
+	__VOL uint32_t RXCRCR;		/*SPI RX CRC register (not used in I2S mode)		ADDRESS OFFSET = 0x14*/
+	__VOL uint32_t TXCRCR;		/*SPI TX CRC register (not used in I2S mode)		ADDRESS OFFSET = 0x18*/
+	__VOL uint32_t I2SCFGR;		/*SPI_I2S configuration register 					ADDRESS OFFSET = 0x1C*/
+	__VOL uint32_t I2SPR;		/*SPI_I2S prescaler register 						ADDRESS OFFSET = 0x20*/
+
+}SPI_Reg;
+
 
 /*
  * PWR Definition (PWR Base Address Type Casted To PWR_Reg)
@@ -270,6 +284,14 @@ typedef struct
  *
  */
 #define EXTI	((EXTI_Reg*)EXTI_BASE_ADDR)
+
+
+/*
+ *SPI Definition (SPI Base Address Type Casted To SPI_Reg)
+ */
+#define SPI1	((SPI_Reg*)SPI1_BASE_ADDR)
+#define SPI2	((SPI_Reg*)SPI2_BASE_ADDR)
+#define SPI3	((SPI_Reg*)SPI3_BASE_ADDR)
 
 
 /*
@@ -391,6 +413,26 @@ typedef struct
 
 
 /*
+ * IRO (INTERUPT REQUEST NUMBER) For STM32F407x MCU
+ * Update These Macros According To Your Micro-controller
+ */
+#define IRO_No_EXTI0	6
+#define IRO_No_EXTI1	7
+#define IRO_No_EXTI2	8
+#define IRO_No_EXTI3	9
+#define IRO_No_EXTI4	10
+#define IRO_No_EXTI9_5	23
+#define IRO_No_EXTI15_10	40
+
+
+/*
+ * Macros of all the possible levels
+ */
+#define NVIC_IRQ_PRI0	0
+#define NVIC_IRQ_PRI15	15
+
+
+/*
  * Generic Maros
  */
 #define ENABLE				1
@@ -398,5 +440,7 @@ typedef struct
 #define SET 				ENABLE
 #define RESET 				DISABLE
 
+#include "stm32f407xx_gpio_driver.h"
+#include "stm32f407xx_spi_driver.h"
 
 #endif /* INC_STM32F407XX_H_ */
