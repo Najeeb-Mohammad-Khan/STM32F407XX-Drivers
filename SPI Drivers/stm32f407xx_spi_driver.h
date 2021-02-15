@@ -105,6 +105,12 @@ void SPI_IRQ_Handling(SPI_Handle *pHandle);
 
 
 /*
+ * Other Peripheral And Control APIs
+ */
+uint8_t Get_Flag_Status(SPI_Reg *pSPIx, uint32_t FlagName);
+void SPI_SSOE_Config(SPI_Reg *pSPIx, uint8_t ENorDI);
+
+/*
  * SPI FLAG STATUS DEFITIONS
  * (PROVIDES  MASKING INFO OF VARIOUS FLAGS IN SR REGISTER)
  */

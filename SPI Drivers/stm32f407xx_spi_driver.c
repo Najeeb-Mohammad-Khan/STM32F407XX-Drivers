@@ -86,11 +86,10 @@ void SPI_PCLK_Control(SPI_Reg *pSPIx, uint8_t ENorDI)
 void SPI_PControl(SPI_Reg *pSPIx, uint8_t ENorDI)
 {
 	if(ENorDI == ENABLE)
-	{	uint16_t temp = 0;
-
-		if(!(pSPIx->CR1 & (1 << SPI_CR1_SSI)))
+	{
+		if((!(Get_Flag_Status(pSPIx, SPI_CR1_SSI))) & (Get_Flag_Status(pSPIx, SPI_CR1_SSM)))
 		{
-			pSPIx->CR1 |= (1 << SPI_CR1_SSI);
+			pSPIx->CR1 |= (1 << SPI_CR1_SSI); //Setting SSI to prevent MODF Bit triggering and Resetting Master Bit in CR1.
 		}
 
 		pSPIx->CR1 |= (1 << SPI_CR1_SPE);
@@ -186,7 +185,7 @@ void SPI_Init(SPI_Handle *pSPI_Handle)
  * 1. SPI_Reg*pSPIx
  * 				- Base address of the SPI peripheral
  * 2. FlagName	- Name of the flag for which you want to get status.
- * @Return		-	None
+ * @Return		-	uint8_t 	(ENABLE OR DISABLE)
  *
  * @Note		-	None
  *
@@ -200,6 +199,34 @@ uint8_t Get_Flag_Status(SPI_Reg *pSPIx, uint32_t FlagName)
 
 	return RESET;
 }
+
+
+/*********************  FUNCTION DOCUMENTATION  ***************************
+ * @Function	-	SPI_SSOE_Config
+ * @Brief		-	This function Configures the SSOE Register Bit of CR2 SPI Register
+ *
+ * @Input Parameters:
+ * 1. SPI_Reg*pSPIx
+ * 				- Base address of the SPI peripheral
+ * 2. ENorDI	- ENABLE or DISABLE
+ * @Return		-	None
+ *
+ * @Note		-	None
+ *
+ *************************************************************************/
+void SPI_SSOE_Config(SPI_Reg *pSPIx, uint8_t ENorDI)
+{
+	if(ENorDI == ENABLE)
+	{
+		pSPIx->CR2 |= (1 << SPI_CR2_SSOE);
+	}
+
+	else
+	{
+		pSPIx->CR2 &= ~(1 << SPI_CR2_SSOE);
+	}
+}
+
 
 
 /*
@@ -224,6 +251,12 @@ uint8_t Get_Flag_Status(SPI_Reg *pSPIx, uint32_t FlagName)
  *************************************************************************/
 void SPI_Send_Data(SPI_Reg *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
 {
+	//ENABLING SSOE FOR SINGLE MATER CONFIGURATION (MSTR = 1 & SSM = 0)
+	if(Get_Flag_Status(pSPIx, SPI_CR1_MSTR) & !(Get_Flag_Status(pSPIx, SPI_CR1_SSM)))
+	{
+		SPI_SSOE_Config(pSPIx, ENABLE);
+	}
+
 	//Activating The SPI Peripheral Before Changing the Control Register
 	SPI_PControl(pSPIx, ENABLE);
 
@@ -250,7 +283,36 @@ void SPI_Send_Data(SPI_Reg *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
 		}
 	}
 
+	//Waiting For The SPI To Conplete Its Data Sending Task
+	while(!Get_Flag_Status(pSPIx, SPI_SR_BSY));
+
 	//Deactivating The SPI Peripheral After Changing the Control Register
 	SPI_PControl(pSPIx, DISABLE);
+
+}
+
+
+/*
+ * SPI Receive Data
+ */
+
+/*********************  FUNCTION DOCUMENTATION  ***************************
+ * @Function	-	SPI_ReceiveData
+ * @Brief		-	This function Receives Data on SPI Port
+ *
+ * @Input Parameters:
+ * 1. SPI_Reg *pSPIx
+ * 				- Base address of the SPI peripheral
+ * 2. uint8_t *pRxBuffer
+ * 				- Receive Buffer Variable
+ * 3. uint32_t Len
+ * 				- Length of the Data Word
+ * @Return		-	None
+ *
+ * @Note		-	This is BLOCKING CALL
+ *
+ *************************************************************************/
+void SPI_Send_Data(SPI_Reg *pSPIx, uint8_t *pRxBuffer, uint32_t Len)
+{
 
 }
