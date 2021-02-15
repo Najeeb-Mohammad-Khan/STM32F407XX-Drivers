@@ -46,8 +46,8 @@ typedef struct
 //SPI BUS CONFIG {@SPI_BusConfig}
 #define SPI_BUS_CNFG_FD				0x1
 #define SPI_BUS_CNFG_HD				0x2
-#define SPI_BUS_CNFG_SIMPLEX_TxONLY	0x3
-#define SPI_BUS_CNFG_SIMPLEX_RxONLY	0x4
+#define SPI_BUS_CNFG_SIMPLEX_RxONLY	0x3
+//#define SPI_BUS_CNFG_SIMPLEX_TxONLY	0x4
 
 //SPI CLOCK SPEED { @SPI_Sclk_Speed }
 #define SPI_SCLK_SPEED_DIV2		0x0
@@ -72,8 +72,8 @@ typedef struct
 #define SPI_CPHA_HIGH	0x1
 
 //SPI SOFTWARE SLAVE MANAGEMENT { @SPI_SSM }
-#define SPI_SSM_SW	0x0
-#define SPI_SSM_HW	0x1
+#define SPI_SSM_DI	0x0
+#define SPI_SSM_EN	0x1
 
 
 /*
@@ -84,10 +84,10 @@ void SPI_DeInit(SPI_Reg *pSPIx);
 
 
 /*
- * SPI Clock Setup
+ * SPI Clock Setup & Peripheral Control
  */
 void SPI_PCLK_Control(SPI_Reg *pSPIx, uint8_t ENorDI);
-
+void SPI_PControl(SPI_Reg *pSPIx, uint8_t ENorDI);
 
 /*
  * Data Send And Receive
@@ -103,6 +103,20 @@ void SPI_IRQ_Config(uint8_t IRQNumber, uint8_t ENorDI);
 void SPI_IRQ_PriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority);
 void SPI_IRQ_Handling(SPI_Handle *pHandle);
 
+
+/*
+ * SPI FLAG STATUS DEFITIONS
+ * (PROVIDES  MASKING INFO OF VARIOUS FLAGS IN SR REGISTER)
+ */
+#define SPI_RXNE_FLAG 		(1 << SPI_SR_RXNE)
+#define SPI_TXE_FLAG		(1 << SPI_SR_TXE)
+#define SPI_CHSIDE_FLAG		(1 << SPI_SR_CHSIDE)
+#define SPI_UDR_FLAG		(1 << SPI_SR_UDR)
+#define SPI_CRC_ERR_FLAG	(1 << SPI_SR_CRC_ERR)
+#define SPI_MODF_FLAG		(1 << SPI_SR_MODF)
+#define SPI_OVR_FLAG		(1 << SPI_SR_OVR)
+#define SPI_BSY_FLAG		(1 << SPI_SR_BSY)
+#define SPI_FRE_FLAG		(1 << SPI_SR_FRE)
 
 
 #endif /* STM32F407XX_SPI_DRIVER_H_ */
