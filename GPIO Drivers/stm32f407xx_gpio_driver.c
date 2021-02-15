@@ -27,6 +27,9 @@
 void GPIO_Init(GPIO_Handle *pGPIO_Handle)
 {	uint32_t temp = 0;
 
+	//Enabling the CLOCK
+	GPIO_PCLK_Control(pGPIO_Handle->pGPIOx, ENABLE);
+
 	//CONFIGURING PIN MODE
 	if(pGPIO_Handle->GPIO_PinCFGN.GPIO_PinMode <= GPIO_MODE_ANG)
 	{
@@ -124,7 +127,7 @@ void GPIO_Init(GPIO_Handle *pGPIO_Handle)
 		ALFN_Reg_Select = (pGPIO_Handle->GPIO_PinCFGN.GPIO_PinNumber / 8);
 		ALFN_Pin_Select = (pGPIO_Handle->GPIO_PinCFGN.GPIO_PinNumber % 8);
 
-		if(ALFN_Reg_Select > 1)
+		if(ALFN_Reg_Select >= 1)
 		{
 			pGPIO_Handle->pGPIOx->AFRH &= ~(0xF << ALFN_Pin_Select);
 			pGPIO_Handle->pGPIOx->AFRH |= (pGPIO_Handle->GPIO_PinCFGN.GPIO_PinAltFunMode << (0x4*ALFN_Pin_Select));
@@ -440,7 +443,7 @@ void GPIO_Write_Output_Port(GPIO_Reg *pGPIOx, uint16_t Value)
  *************************************************************************/
 void GPIO_Toggle_Pin(GPIO_Reg *pGPIOx, uint8_t PinNumber)
 {
-	if(pGPIOx->ODR == 0)
+	if(!(pGPIOx->ODR & (1 << PinNumber)))
 	{
 		pGPIOx->ODR |= (1 << PinNumber);
 	}
