@@ -9,8 +9,9 @@
 #define INC_STM32F407XX_H_
 
 #include <stdint.h>
+#include <stddef.h>
 #define __VOL	volatile
-
+#define __Weak	__attribute__((weak))
 
 /*
  * ***************    PROCESSOR SPECIFIC DETAILS    *******************
@@ -227,10 +228,10 @@ typedef struct
 
 typedef struct
 {
-	__VOL uint32_t CR1;			/*SPI control register 1 (not used in I2S mode)		ADDRESS OFFSET = 0x00*/
-	__VOL uint32_t CR2;			/*SPI control register 2							ADDRESS OFFSET = 0x04*/
-	__VOL uint32_t SR;			/*SPI status register								ADDRESS OFFSET = 0x08*/
-	__VOL uint32_t DR;			/*SPI data register									ADDRESS OFFSET = 0x0C*/
+	__VOL uint32_t CR1;			/*SPI Control register 1 (not used in I2S mode)		ADDRESS OFFSET = 0x00*/
+	__VOL uint32_t CR2;			/*SPI Control register 2							ADDRESS OFFSET = 0x04*/
+	__VOL uint32_t SR;			/*SPI Status register								ADDRESS OFFSET = 0x08*/
+	__VOL uint32_t DR;			/*SPI Data register									ADDRESS OFFSET = 0x0C*/
 	__VOL uint32_t CRCPR;		/*SPI CRC polynomial register (not used in I2Smode)	ADDRESS OFFSET = 0x10*/
 	__VOL uint32_t RXCRCR;		/*SPI RX CRC register (not used in I2S mode)		ADDRESS OFFSET = 0x14*/
 	__VOL uint32_t TXCRCR;		/*SPI TX CRC register (not used in I2S mode)		ADDRESS OFFSET = 0x18*/
@@ -238,6 +239,22 @@ typedef struct
 	__VOL uint32_t I2SPR;		/*SPI_I2S prescaler register 						ADDRESS OFFSET = 0x20*/
 
 }SPI_Reg;
+
+
+typedef struct
+{
+	__VOL uint32_t CR1;			/*I2C Control register 1 			ADDRESS OFFSET = 0x00*/
+	__VOL uint32_t CR2;			/*I2C Control register 2 			ADDRESS OFFSET = 0x04*/
+	__VOL uint32_t OAR1;		/*I2C Own address register 1		ADDRESS OFFSET = 0x08*/
+	__VOL uint32_t OAR2;		/*I2C Own address register 2		ADDRESS OFFSET = 0x0C*/
+	__VOL uint32_t DR;			/*I2C Data register					ADDRESS OFFSET = 0x10*/
+	__VOL uint32_t SR1;			/*I2C Status register 1				ADDRESS OFFSET = 0x14*/
+	__VOL uint32_t SR2;			/*I2C Status register 2				ADDRESS OFFSET = 0x18*/
+	__VOL uint32_t CCR;			/*I2C Clock control register		ADDRESS OFFSET = 0x1C*/
+	__VOL uint32_t TRISE;		/*I2C TRISE register				ADDRESS OFFSET = 0x20*/
+	__VOL uint32_t FLTR;		/*I2C  FLTR register				ADDRESS OFFSET = 0x24*/
+
+}I2C_Reg;
 
 
 /*
@@ -293,6 +310,12 @@ typedef struct
 #define SPI2	((SPI_Reg*)SPI2_BASE_ADDR)
 #define SPI3	((SPI_Reg*)SPI3_BASE_ADDR)
 
+/*
+ * I2C Peripheral Definition Macros (I2C Base Address Type Casted To I2C_Reg)
+ */
+#define I2C1		((I2C_Reg*)I2C1_BASE_ADDR)
+#define I2C3		((I2C_Reg*)I2C3_BASE_ADDR)
+#define I2C2		((I2C_Reg*)I2C2_BASE_ADDR)
 
 /*
  * Clock Enable Macro For GPIO Peripherals
@@ -480,9 +503,78 @@ typedef struct
 #define SPI_SR_BSY			0x7
 #define SPI_SR_FRE			0x8
 
+//GPIOx Reset Macros
+#define SPI1_REG_RESET()	do{(RCC->APB2RSTR |= (1 << 12)); (RCC->APB2RSTR &= ~(1 << 12));} while(0)
+#define SPI2_REG_RESET()	do{(RCC->APB1RSTR |= (1 << 14)); (RCC->APB1RSTR &= ~(1 << 14));} while(0)
+#define SPI3_REG_RESET()	do{(RCC->APB1RSTR |= (1 << 15)); (RCC->APB1RSTR &= ~(1 << 15));} while(0)
+
+
+/*
+ * BIT POSITON DEFITIONS FOR I2C PERIPHERALS
+ */
+//For CR1 Register
+#define I2C_CR1_PE			0x0
+#define I2C_CR1_SMBUS		0x1
+#define I2C_CR1_SMB_TYPE	0x3
+#define I2C_CR1_ENARP		0x4
+#define I2C_CR1_ENPEC		0x5
+#define I2C_CR1_ENGC		0x6
+#define I2C_CR1_NO_STRETCH	0x7
+#define I2C_CR1_START		0x8
+#define I2C_CR1_STOP		0x9
+#define I2C_CR1_ACK			0xA
+#define I2C_CR1_POS			0xB
+#define I2C_CR1_PEC			0xC
+#define I2C_CR1_ALERT		0xD
+#define I2C_CR1_SWRST			0xF
+
+//FOR CR2 REGISTER
+#define I2C_CR2_FREQ		0x0
+#define I2C_CR2_ITERREN		0x8
+#define I2C_CR2_ITEVTEN		0x9
+#define I2C_CR2_ITBUFEN		0xA
+#define I2C_CR2_DMAEN		0xB
+#define I2C_CR2_LAST		0xC
+
+//FOR SR1 REGISTER
+#define I2C_SR1_SB			0x0
+#define I2C_SR1_ADDR		0x1
+#define I2C_SR1_BTF			0x2
+#define I2C_SR1_ADD10		0x3
+#define I2C_SR1_STOPF		0x4
+#define I2C_SR1_RxNE		0x6
+#define I2C_SR1_TxE			0x7
+#define I2C_SR1_BERR		0x8
+#define I2C_SR1_ARLO		0x9
+#define I2C_SR1_AF			0xA
+#define I2C_SR1_OVR			0xB
+#define I2C_SR1_PEC_ERR		0xC
+#define I2C_SR1_TIME_OUT	0xE
+#define I2C_SR1_SMB_ALERT	0xF
+
+//FOR SR2 REGISTER
+#define I2C_SR2_MSL			0x0
+#define I2C_SR2_BUSY		0x1
+#define I2C_SR2_TRA			0x2
+#define I2C_SR2_GEN_CALL	0x4
+#define I2C_SR2_SMBDE_FAULT	0x5
+#define I2C_SR2_SMB_HOST	0x6
+#define I2C_SR2_DUALF		0x7
+#define I2C_SR2_PEC			0x8
+
+//FOR  CCR REGISTER
+#define I2C_CCR_CCR			0x0
+#define I2C_CCR_DUTY		0xE
+#define I2C_CCR_FS			0xF
+
+//GPIOx Reset Macros
+#define I2C1_REG_RESET()	do{(RCC->APB1RSTR |= (1 << 21)); (RCC->APB1RSTR &= ~(1 << 21));} while(0)
+#define I2C2_REG_RESET()	do{(RCC->APB1RSTR |= (1 << 22)); (RCC->APB1RSTR &= ~(1 << 22));} while(0)
+#define I2C3_REG_RESET()	do{(RCC->APB1RSTR |= (1 << 23)); (RCC->APB1RSTR &= ~(1 << 23));} while(0)
 
 
 #include "stm32f407xx_gpio_driver.h"
 #include "stm32f407xx_spi_driver.h"
+#include "stm32f407xx_i2c_driver.h"
 
 #endif /* INC_STM32F407XX_H_ */
