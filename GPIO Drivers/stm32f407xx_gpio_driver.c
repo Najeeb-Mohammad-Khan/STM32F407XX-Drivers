@@ -129,14 +129,14 @@ void GPIO_Init(GPIO_Handle *pGPIO_Handle)
 
 		if(ALFN_Reg_Select >= 1)
 		{
-			pGPIO_Handle->pGPIOx->AFRH &= ~(0xF << ALFN_Pin_Select);
+			pGPIO_Handle->pGPIOx->AFRH &= ~(0xF << (ALFN_Pin_Select * 0x4));;
 			pGPIO_Handle->pGPIOx->AFRH |= (pGPIO_Handle->GPIO_PinCFGN.GPIO_PinAltFunMode << (0x4*ALFN_Pin_Select));
 
 		}
 
 		if(ALFN_Reg_Select < 1)
 		{
-			pGPIO_Handle->pGPIOx->AFRL &= ~(0xF << ALFN_Pin_Select);
+			pGPIO_Handle->pGPIOx->AFRL &= ~(0xF << (ALFN_Pin_Select * 0x4));
 			pGPIO_Handle->pGPIOx->AFRL |= (pGPIO_Handle->GPIO_PinCFGN.GPIO_PinAltFunMode << (0x4*ALFN_Pin_Select));
 
 		}
